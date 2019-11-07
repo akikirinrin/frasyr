@@ -92,3 +92,14 @@ test_that("confirm whether normtest function works as procedure in vignettes", {
   expect_equal(is_resid_normdist(SR = "HS", method = "L2", vpares = res_vpa),
                as.logical(pass_shapiro * pass_ks))
 })
+
+test_that("autocorrelation test works correctly", {
+
+  expect_true(diffinv(rnorm(10000)) %>%
+                is_autocorrelated(ci = 0.99))
+  expect_true(stats::filter(rnorm(10000), filter = rep(1, 3), circular = TRUE) %>%
+                is_autocorrelated(ci = 0.99))
+
+  expect_false(runif(10000) %>% is_autocorrelated(ci = 0.99))
+  expect_false(rnorm(10000) %>% is_autocorrelated(ci = 0.99))
+})

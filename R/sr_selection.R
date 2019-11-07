@@ -3,7 +3,8 @@
 #' Pull data frame from list
 #'
 #' @param list List object such as VPA result
-#' @param dfname Name of data frame such as "baa" in VPA result
+#' @param dfname Name of data frame in character such as "baa" in VPA result
+#' @export
 pull_df_from_list <- function(list, dfname) {
   list[dfname] %>%
     as.data.frame()
@@ -98,4 +99,24 @@ is_resid_normdist <- function(srdata, p_threshold = 0.05) {
   pass_shapiro_and_ks(x  = srdata$resid,
                       sd = srdata$pars$sd,
                       p_threshold = p_threshold)
+}
+
+#' 自己相関の検定
+#'
+#' @inheritParams stats::acf
+#' @param ci 自己相関のための信頼区間．デフォルト値は0.95
+#' @examples
+#' \dontrun{
+#' res_vpa %>%
+#'   get.SRdata() %>%
+#'   fit.SR("HS", "L1") %>%
+#'   pull_df_from_list("resid2") %>%
+#'   is_autocorrelated()
+#' }
+#' @export
+is_autocorrelated <- function(x, ci = 0.95) {
+  res_acf   <- acf(x, plot = FALSE)
+  ci_value  <- qnorm((1 + ci)/2)/sqrt(res_acf$n.used)
+  value_acf <- as.vector(res_acf$acf)[-1] # Remove 1st because it always == 1.0
+  any(value_acf > ci_value)
 }
