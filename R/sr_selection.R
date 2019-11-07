@@ -81,3 +81,21 @@ pass_shapiro_and_ks <- function(x, sd, p_threshold) {
     ks.test(x, y = "pnorm", sd = sd)$p.value > p_threshold
   return(as.logical(pass_shapiro * pass_kstest))
 }
+
+#' 再生産関係のフィット残差の正規性検定
+#'
+#' @inheritParams pass_shapiro_and_ks
+#' @param srdata fit.SR()の出力
+#' @examples
+#' \dontrun{
+#' vpares %>%
+#'   get.SRdata() %>%
+#'   fit.SR(SR = "HS", method = "L1") %>%
+#'   is_resid_normdist()
+#' }`
+#' @export
+is_resid_normdist <- function(srdata, p_threshold = 0.05) {
+  pass_shapiro_and_ks(x  = srdata$resid,
+                      sd = srdata$pars$sd,
+                      p_threshold = p_threshold)
+}

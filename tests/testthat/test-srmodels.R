@@ -55,3 +55,40 @@ test_that("normality test works correctly", {
   does_normally_distribute(runif(100),           sd = 0.2, FALSE)
   does_normally_distribute(runif(100),           sd = 0.8, FALSE)
 })
+
+test_that("is_resid_normdist() enables simple normality test", {
+  expect_true(is_resid_normdist(SR = "HS", method = "L1", vpares = res_vpa))
+  expect_true(is_resid_normdist(SR = "HS", method = "L2", vpares = res_vpa))
+  expect_true(is_resid_normdist(SR = "BH", method = "L1", vpares = res_vpa))
+  expect_true(is_resid_normdist(SR = "BH", method = "L2", vpares = res_vpa))
+  expect_true(is_resid_normdist(SR = "RI", method = "L1", vpares = res_vpa))
+  expect_true(is_resid_normdist(SR = "RI", method = "L2", vpares = res_vpa))
+})
+
+test_that("confirm whether normtest function works as procedure in vignettes", {
+  # HS-L1
+  # Test by procedure in vignettes
+  fitted <- res_vpa %>%
+    get.SRdata() %>%
+    fit.SR("HS", "L1")
+  pass_shapiro <- shapiro.test(fitted$resid)$p.value > 0.05
+  pass_ks      <-
+    ks.test(fitted$resid, y = "pnorm", sd = fitted$pars$sd)$p.value > 0.05
+
+  # compare
+  expect_equal(is_resid_normdist(SR = "HS", method = "L1", vpares = res_vpa),
+               as.logical(pass_shapiro * pass_ks))
+  # -----------------------------------------------
+  # HS-L2
+  # Test by procedure in vignettes
+  fitted <- res_vpa %>%
+    get.SRdata() %>%
+    fit.SR("HS", "L2")
+  pass_shapiro <- shapiro.test(fitted$resid)$p.value > 0.05
+  pass_ks      <-
+    ks.test(fitted$resid, y = "pnorm", sd = fitted$pars$sd)$p.value > 0.05
+
+  # compare
+  expect_equal(is_resid_normdist(SR = "HS", method = "L2", vpares = res_vpa),
+               as.logical(pass_shapiro * pass_ks))
+})
