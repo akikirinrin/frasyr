@@ -10,7 +10,7 @@ pull_df_from_list(list, dfname)
 \arguments{
 \item{list}{List object such as VPA result}
 
-\item{dfname}{Name of data frame such as "baa" in VPA result}
+\item{dfname}{Name of data frame in character such as "baa" in VPA result}
 }
 \description{
 Util functions for select SRmodels
