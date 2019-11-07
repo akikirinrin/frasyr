@@ -42,3 +42,16 @@ test_that("Obtain SR data for plot quickly", {
   inputs_are("RI", "L2", return_is = "RI_L2")
 
 })
+
+test_that("normality test works correctly", {
+  does_normally_distribute <- function(x, sd, expect) {
+    expect_equal(pass_shapiro_and_ks(x = x, sd = sd, p_threshold = 0.05),
+                 expect)
+  }
+  does_normally_distribute(rnorm(100, sd = 0.3), sd = 0.3, TRUE)
+  does_normally_distribute(rnorm(100, sd = 0.8), sd = 0.3, FALSE)
+  does_normally_distribute(rnorm(100, sd = 0.8), sd = 0.8, TRUE)
+  does_normally_distribute(runif(100),           sd = 0.3, FALSE)
+  does_normally_distribute(runif(100),           sd = 0.2, FALSE)
+  does_normally_distribute(runif(100),           sd = 0.8, FALSE)
+})

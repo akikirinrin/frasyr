@@ -66,3 +66,18 @@ fit_draw_SRline <- function(vpares, SR, method, show.year = FALSE) {
                  vpares = vpares) %>%
     draw_SRline(observed = rawdata, show.year = show.year)
 }
+
+#' ベクトルxの正規性を検定する
+#'
+#' Shapiro testとKolmogorov-Smirnov testの両方において
+#' 帰無仮説を棄却できなかった（母集団が正規分布と異なるとは言えない）場合に
+#' \code{TRUE}が返る
+#' @inheritParams stats::shapiro.test
+#' @param sd SD of pnorm function to compare
+#' @param p_threshold 有意性判定の基準とするp値
+pass_shapiro_and_ks <- function(x, sd, p_threshold) {
+  pass_shapiro <- shapiro.test(x)$p.value > p_threshold
+  pass_kstest  <-
+    ks.test(x, y = "pnorm", sd = sd)$p.value > p_threshold
+  return(as.logical(pass_shapiro * pass_kstest))
+}
