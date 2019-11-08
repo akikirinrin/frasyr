@@ -1323,7 +1323,7 @@ plot_HCR <- function(SBtarget,SBlim,SBban,Ftarget,
 #Fig_Fish_Manage_Rule(SBtarget,SBlim,SBban,Ftarget,col.multi2currf = "#093d86", col.SBtarget = "#00533E", col.SBlim = "#edb918",col.SBban = "#C73C2E",col.Ftarget = "#714C99", col.betaFtarget = "#505596")
 # function;ruri-rio, sbtarget;moegi-iro, sblim;koki-ki; sbban;hi-iro, ftarget;sumire-iro, betaftarget;kikyou-iro
 
-#' MSYを達成するときの%SPRを計算する
+#' MSYを達成するときの\%SPRを計算する
 #' @export
 calc_perspr <- function(finput, # 将来予測インプット
                          Fvector, # Fのベクトル

@@ -1,10 +1,7 @@
 #' VPAの結果から再生産関係推定用のデータを作成する
 #'
 #' @param vpares VPAの結果のオブジェクト
-#' 
-#'
 #' @export
-
 get.SRdata <- function(vpares,R.dat = NULL,
                        SSB.dat = NULL,
                        years = as.numeric(colnames(vpares$naa)),
