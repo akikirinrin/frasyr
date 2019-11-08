@@ -4,6 +4,7 @@
 #' @param TmbFile Cppファイルの名前
 #' @param CppDir Cppファイルが格納されているディレクトリ
 #' @param RunDir 実行するディレクトリ
+#' @encoding UTF-8
 #' 
 #' @examples
 #' \dontrun{
