@@ -1324,10 +1324,11 @@ plot_HCR <- function(SBtarget,SBlim,SBban,Ftarget,
 # function;ruri-rio, sbtarget;moegi-iro, sblim;koki-ki; sbban;hi-iro, ftarget;sumire-iro, betaftarget;kikyou-iro
 
 #' MSYを達成するときの\%SPRを計算する
+#'
+#' @param finput 将来予測インプット
+#' @param Fvector Fのベクトル
 #' @export
-calc_perspr <- function(finput, # 将来予測インプット
-                         Fvector, # Fのベクトル
-                         Fmax=10,max.age=Inf){
+calc_perspr <- function(finput, Fvector, Fmax=10, max.age=Inf){
     res_vpa <- finput$res0
     # MSYにおける将来予測計算をやりなおし
     finput$outtype <- "FULL"
