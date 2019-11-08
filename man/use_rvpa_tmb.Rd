@@ -18,6 +18,8 @@ use_rvpa_tmb(TmbFile = "rvpa_tmb", CppDir = system.file("executable",
 Ridge VPAの計算をTMBで実行するためにcppファイルのコンパイル等をする関数
 }
 \examples{
+\dontrun{
 use_rvpa_tmb()
+}
 
 }

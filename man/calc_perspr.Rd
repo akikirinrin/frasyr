@@ -2,10 +2,15 @@
 % Please edit documentation in R/utilities.r
 \name{calc_perspr}
 \alias{calc_perspr}
-\title{MSYを達成するときの%SPRを計算する}
+\title{MSYを達成するときの\%SPRを計算する}
 \usage{
 calc_perspr(finput, Fvector, Fmax = 10, max.age = Inf)
 }
+\arguments{
+\item{finput}{将来予測インプット}
+
+\item{Fvector}{Fのベクトル}
+}
 \description{
-MSYを達成するときの%SPRを計算する
+MSYを達成するときの\%SPRを計算する
 }

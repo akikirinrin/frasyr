@@ -2,7 +2,7 @@
 % Please edit documentation in R/future.r
 \name{get.SPR}
 \alias{get.SPR}
-\title{毎年のFの%SPRやターゲットした%SPRに相当するFの大きさを計算する}
+\title{毎年のFの\%SPRやターゲットした\%SPRに相当するFの大きさを計算する}
 \usage{
 get.SPR(dres, target.SPR = 30, Fmax = 10, max.age = Inf)
 }
