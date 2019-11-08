@@ -5,8 +5,10 @@
 #' @param CppDir Cppファイルが格納されているディレクトリ
 #' @param RunDir 実行するディレクトリ
 #' 
-#' @examples 
+#' @examples
+#' \dontrun{
 #' use_rvpa_tmb()
+#' }
 #' 
 #' @export
 
