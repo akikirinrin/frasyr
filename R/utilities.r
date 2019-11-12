@@ -1416,3 +1416,12 @@ format_beta_table <- function(beta_table, divide_by = 1, round = TRUE) {
   if (round == TRUE) return(cbind(beta, round(values)))
   cbind(beta, values)
 }
+
+#' 値の大小に応じて表の背景にグラデーションをつける
+#' @param beta_table \code{format_beta_table}で整形したβの表
+#' @param color 表の背景となる任意の色
+colorize_table <- function(beta_table, color) {
+  beta_table %>%
+    formattable::formattable(
+      list(formattable::area(col = -1) ~ formattable::color_tile("white", color)))
+}
