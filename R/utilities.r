@@ -1386,3 +1386,16 @@ calc_perspr <- function(finput, Fvector, Fmax=10, max.age=Inf){
                          plot=FALSE,max.age=max.age)$currentSPR$perSPR
     spr.current
 }
+
+#' kobeIItable から任意の表を指名して取り出す
+#'
+#' @param kobeII_table \code{make_kobeII_table}の出力
+#' @param name \code{kobeII_table}の要素名
+#'
+#' @encoding UTF-8
+pull_var_from_kobeII_table <- function(kobeII_table, name) {
+  table <- kobeII.table[[name]]
+  table %>%
+    dplyr::arrange(desc(beta)) %>%
+    dplyr::select(-HCR_name, -stat_name)
+}
