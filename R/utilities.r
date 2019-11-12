@@ -1462,3 +1462,32 @@ export_kobeII_table <- function(name, divide_by, color, fname, kobeII_table) {
     colorize_table(color) %>%
     export_formattable(fname)
 }
+
+#' β調整による管理効果を比較する表を画像として一括保存
+#'
+#' @inheritParams \code{\link{pull_var_from_kobeII_table}}
+#' @param fname_ssb 「平均親魚量」の保存先ファイル名
+#' @param fname_catch 「平均漁獲量」の保存先ファイル名
+#' @param fname_ssb_above_target 「親魚量が目標管理基準値を上回る確率」の保存先ファイル名
+#' @param fname_ssb_above_limit 「親魚量が限界管理基準値を上回る確率」の保存先ファイル名
+#' @examples
+#' \dontrun{
+#' export_kobeII_tables(kobeII.table)
+#' }
+#' @export
+export_kobeII_tables <- function(kobeII_table,
+                                 fname_ssb = "tbl_ssb.png",
+                                 fname_catch = "tbl_catch.png",
+                                 fname_ssb_above_target = "tbl_ssb>target.png",
+                                 fname_ssb_above_limit = "tbl_ssb>limit.png") {
+  blue   <- "#96A9D8"
+  green  <- "#B3CE94"
+  yellow <- "#F1C040"
+
+  purrr::pmap(list(name = c("ssb.mean", "catch.mean", "prob.over.ssbtarget", "prob.over.ssblimit"),
+                   divide_by = c(1000, 1000, 1, 1),
+                   color = c(blue, green, yellow, yellow),
+                   fname = c(fname_ssb, fname_catch, fname_ssb_above_target, fname_ssb_above_limit)),
+              .f = export_kobeII_table,
+              kobeII_table = kobeII_table)
+}
