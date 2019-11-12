@@ -826,6 +826,7 @@ get.stat4 <- function(fout,Brefs,
 #'
 #' @param vpares VPAの結果のオブジェクト
 #' @param refs_base est.MSYから得られる管理基準値の表
+#' @param family フォントファミリー。デフォルトはJP2（MSゴシック）
 #' @encoding UTF-8
 #'
 #' @export
@@ -845,6 +846,7 @@ plot_kobe_gg <- plot_kobe <- function(vpares,refs_base,roll_mean=1,
                          HCR.label.position=c(1,1), # デフォルトはx軸方向が1, y軸方向が1の相対値です。様子を見ながら調整してください
                          refs.color=c("#00533E","#edb918","#C73C2E"),
                          beta=NULL,
+                         family = "JP1",
                          plot.year="all"){
 
    
@@ -927,23 +929,27 @@ plot_kobe_gg <- plot_kobe <- function(vpares,refs_base,roll_mean=1,
         g6 <- g6 + geom_text(data=tibble(x=c(ban.ratio,limit.ratio,low.ratio,1),
                               y=rep(0.1,4),
                               label=c("Bban","Blimit","Blow","Btarget")),
+                             family = family,
                              aes(x=x,y=y,label=label))
         g4 <- g4 + geom_vline(xintercept=c(ban.ratio,limit.ratio,low.ratio,1),linetype=2)+
         geom_text(data=tibble(x=c(ban.ratio,limit.ratio,low.ratio,1),
                               y=rep(0.1,4),
                               label=c("Bban","Blimit","Blow","Btarget")),
+                  family = family,
                   aes(x=x,y=y,label=label))
      }else{
          
         g6 <- g6 + geom_text(data=tibble(x=c(ban.ratio,limit.ratio,1),
                                          y=max.U*c(1.05,1,1.05),
                                          label=RP.label),
+                             family = family,
                              aes(x=x,y=y,label=label))
         g4 <- g4 + geom_vline(xintercept=c(1,limit.ratio,ban.ratio),color=refs.color,lty="41",lwd=0.7)+
          ggrepel::geom_label_repel(data=tibble(x=c(1,limit.ratio,ban.ratio),
                                           y=max.U*0.85,
                                           label=RP.label),
                               aes(x=x,y=y,label=label),
+                              family = family,
                               direction="x",nudge_y=max.U*0.9,size=11*0.282)
     }}    
 
