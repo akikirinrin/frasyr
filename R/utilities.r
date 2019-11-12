@@ -1399,3 +1399,20 @@ pull_var_from_kobeII_table <- function(kobeII_table, name) {
     dplyr::arrange(desc(beta)) %>%
     dplyr::select(-HCR_name, -stat_name)
 }
+
+#' kobeIItableから取り出した表を整形
+#'
+#' - 報告書に不要な列を除去する
+#' - 単位を千トンに変換
+#' @param beta_table \code{pull_var_from_kobeII_table}で取得した表
+#' @param divide_by 表の値をこの値で除する．トンを千トンにする場合には1000
+#' @param round TRUEなら値を丸める．漁獲量は現状整数表示なのでデフォルトはTRUE
+format_beta_table <- function(beta_table, divide_by = 1, round = TRUE) {
+  beta   <- beta_table %>%
+    dplyr::select(beta) %>%
+    magrittr::set_colnames("\u03B2") # greek beta in unicode
+  values <- beta_table %>%
+    dplyr::select(-beta) / divide_by
+  if (round == TRUE) return(cbind(beta, round(values)))
+  cbind(beta, values)
+}
