@@ -1425,3 +1425,26 @@ colorize_table <- function(beta_table, color) {
     formattable::formattable(
       list(formattable::area(col = -1) ~ formattable::color_tile("white", color)))
 }
+
+#' 表を画像として保存
+#'
+#' @inheritParams \code{\link{formattable::as.htmlwidget}}
+#' @inheritParams \code{\link{htmltools::html_print}}
+#' @inheritParams \code{\link{webshot::webshot}}
+#' @param table ファイルとして保存したい表
+#' @examples
+#' \dontrun{
+#' your_table %>%
+#'  export_formattable(file = "foo.png")
+#' }
+#' @export
+export_formattable <- function(table, file, width = "100%", height = NULL,
+                               background = "white", delay = 0.1) {
+  widget <- formattable::as.htmlwidget(table, width = width, height = height)
+  path   <- htmltools::html_print(widget, background = background, viewer = NULL)
+  url    <- paste0("file:///", gsub("\\\\", "/", normalizePath(path)))
+  webshot::webshot(url,
+                   file = file,
+                   selector = ".formattable_widget",
+                   delay = delay)
+}
