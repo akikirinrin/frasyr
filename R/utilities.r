@@ -1448,3 +1448,17 @@ export_formattable <- function(table, file, width = "100%", height = NULL,
                    selector = ".formattable_widget",
                    delay = delay)
 }
+
+#' kobeIItableから任意の表を取得し画像として保存
+#'
+#' @inheritParams \code{\link{pull_var_from_kobeII_table}}
+#' @inheritParams \code{\link{format_beta_table}}
+#' @inheritParams \code{\link{colorize_table}}
+#' @inheritParams \code{\link{export_formattable}}
+export_kobeII_table <- function(name, divide_by, color, fname, kobeII_table) {
+  kobeII_table %>%
+    pull_var_from_kobeII_table(name) %>%
+    format_beta_table(divide_by = divide_by) %>%
+    colorize_table(color) %>%
+    export_formattable(fname)
+}
