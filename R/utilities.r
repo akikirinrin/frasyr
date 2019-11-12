@@ -1422,8 +1422,8 @@ format_beta_table <- function(beta_table, divide_by = 1, round = TRUE) {
 #' @param color 表の背景となる任意の色
 colorize_table <- function(beta_table, color) {
   beta_table %>%
-    formattable::formattable(
-      list(formattable::area(col = -1) ~ formattable::color_tile("white", color)))
+    formattable::formattable(list(formattable::area(col = -1) ~
+                                    formattable::color_tile("white", color)))
 }
 
 #' 表を画像として保存
@@ -1484,10 +1484,12 @@ export_kobeII_tables <- function(kobeII_table,
   green  <- "#B3CE94"
   yellow <- "#F1C040"
 
-  purrr::pmap(list(name = c("ssb.mean", "catch.mean", "prob.over.ssbtarget", "prob.over.ssblimit"),
+  purrr::pmap(list(name = c("ssb.mean", "catch.mean",
+                            "prob.over.ssbtarget", "prob.over.ssblimit"),
                    divide_by = c(1000, 1000, 1, 1),
                    color = c(blue, green, yellow, yellow),
-                   fname = c(fname_ssb, fname_catch, fname_ssb_above_target, fname_ssb_above_limit)),
+                   fname = c(fname_ssb, fname_catch,
+                             fname_ssb_above_target, fname_ssb_above_limit)),
               .f = export_kobeII_table,
               kobeII_table = kobeII_table)
 }
