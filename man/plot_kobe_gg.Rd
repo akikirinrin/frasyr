@@ -12,12 +12,14 @@ plot_kobe_gg(vpares, refs_base, roll_mean = 1, category = 4,
   "限界管理基準値", "禁漁水準"), Fratio = NULL,
   yscale = 1.2, xscale = 1.2, HCR.label.position = c(1, 1),
   refs.color = c("#00533E", "#edb918", "#C73C2E"), beta = NULL,
-  plot.year = "all")
+  family = "JP1", plot.year = "all")
 }
 \arguments{
 \item{vpares}{VPAの結果のオブジェクト}
 
 \item{refs_base}{est.MSYから得られる管理基準値の表}
+
+\item{family}{フォントファミリー。デフォルトはJP2（MSゴシック）}
 }
 \description{
 Kobe plotを書く
