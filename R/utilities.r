@@ -96,7 +96,11 @@ convert_vector <- function(vector,name){
 
 convert_vpa_tibble <- function(vpares){
 
+  if (is.null(vpares$input$dat$waa.catch)) {
     total.catch <- colSums(vpares$input$dat$caa*vpares$input$dat$waa,na.rm=T)
+  } else {
+    total.catch <- colSums(vpares$input$dat$caa*vpares$input$dat$waa.catch,na.rm=T)
+  }
     U <- total.catch/colSums(vpares$baa)
 
     SSB <- convert_vector(colSums(vpares$ssb,na.rm=T),"SSB") %>%
@@ -1471,3 +1475,116 @@ export_kobeII_tables <- function(kobeII_table,
               .f = export_kobeII_table,
               kobeII_table = kobeII_table)
 }
+
+#' 会議用の図のフォーマット
+#'
+#' @export
+#' 
+
+theme_SH <- function(){
+    theme_bw(base_size=12) +
+    theme(panel.grid = element_blank(),
+          axis.text.x=element_text(size=11,color="black"),
+          axis.text.y=element_text(size=11,color="black"),
+          axis.line.x=element_line(size= 0.3528),
+          axis.line.y=element_line(size= 0.3528),
+          legend.position="none")
+}
+
+#' 会議用の図の出力関数（大きさ・サイズの指定済）：通常サイズ
+#'
+#' @export
+#' 
+
+ggsave_SH <- function(...){
+    ggsave(width=150,height=85,dpi=600,units="mm",...)
+}
+
+#' 会議用の図の出力関数（大きさ・サイズの指定済）：大きいサイズ
+#'
+#' @export
+#' 
+
+ggsave_SH_large <- function(...){
+    ggsave(width=150,height=120,dpi=600,units="mm",...)
+}
+
+#' fit.SRregimeの結果で得られた再生産関係をプロットするための関数
+#'
+#' レジームごとの観察値と予測線が描かれる
+#' @param resSRregime \code{fit.SRregime}の結果
+#' @param xscale X軸のスケーリングの値（親魚量をこの値で除す）
+#' @param xlabel X軸のラベル
+#' @param yscale Y軸のスケーリングの値（加入量をこの値で除す）
+#' @param ylabel Y軸のラベル
+#' @param labeling.year ラベルに使われる年
+#' @param show.legend 凡例を描くかどうか
+#' @param legend.title 凡例のタイトル（初期設定は\code{"Regime"}）
+#' @param regime.name 凡例に描かれる各レジームの名前（レジームの数だけ必要）
+#' @param base_size \code{ggplot}のベースサイズ
+#' @param add.info \code{AICc}や\code{regime.year}, \code{regime.key}などの情報を加えるかどうか
+#' @param use.fit.SR パラメータの初期値を決めるのに\code{frasyr::fit.SR}を使う（時間の短縮になる）
+#' @examples 
+#' \dontrun{
+#' data(res_vpa)
+#' SRdata <- get.SRdata(res_vpa)
+#' resSRregime <- fit.SRregime(SRdata, SR="HS", method="L2", 
+#'                             regime.year=c(1977,1989), regime.key=c(0,1,0),
+#'                             regime.par = c("a","b","sd")[2:3])
+#' g1 <- SRregime_plot(resSRregime, regime.name=c("Low","High"))
+#' g1
+#' }
+#' @encoding UTF-8
+#' @export
+#' 
+
+SRregime_plot <- function (SRregime_result,xscale=1000,xlabel="SSB",yscale=1,ylabel="R",
+                           labeling.year = NULL, show.legend = TRUE, legend.title = "Regime",regime.name = NULL,
+                           base_size = 16, add.info = TRUE) {
+  pred_data = SRregime_result$pred %>% mutate(Category = "Pred")
+  obs_data = select(SRregime_result$pred_to_obs, -Pred, -resid) %>% mutate(Category = "Obs")
+  combined_data = full_join(pred_data, obs_data)
+  if (is.null(labeling.year)) labeling.year <- c(min(obs_data$Year),obs_data$Year[obs_data$Year %% 5 == 0],max(obs_data$Year))
+  combined_data = combined_data %>% 
+    mutate(label=if_else(is.na(Year),as.numeric(NA),if_else(Year %in% labeling.year, Year, as.numeric(NA)))) %>%
+    mutate(SSB = SSB/xscale, R = R/yscale)
+  g1 = ggplot(combined_data, aes(x=SSB,y=R,label=label)) + 
+    geom_path(data=dplyr::filter(combined_data, Category=="Pred"),aes(group=Regime,colour=Regime,linetype=Regime),size=2, show.legend = show.legend)+
+    geom_point(data=dplyr::filter(combined_data, Category=="Obs"),aes(group=Regime,colour=Regime),size=3, show.legend = show.legend)+
+    geom_path(data=dplyr::filter(combined_data, Category=="Obs"),colour="darkgray",size=1)+
+    xlab(xlabel)+ylab(ylabel)+
+    ggrepel::geom_label_repel()+
+    theme_bw(base_size=base_size)+
+    coord_cartesian(ylim=c(0,combined_data$R*1.05),expand=0)
+  if (show.legend) {
+    if (is.null(regime.name)) {
+      regime.name = unique(combined_data$Regime)
+    }
+    g1 = g1 + scale_colour_hue(name=legend.title, labels = regime.name) +
+      scale_linetype_discrete(name=legend.title, labels = regime.name)
+  }
+  if (add.info) {
+    if (is.null(SRregime_result$input$regime.year)) {
+      g1 = g1 + 
+        # labs(caption=str_c(SRregime_result$input$SR,"(",SRregime_result$input$method,
+        #                    "), regime_year: ", paste0(SRregime_result$input$regime.year,collapse="&"), 
+        #                    ", regime_key: ",paste0(SRregime_result$input$regime.key,collapse="->"),", AICc: ",round(SRregime_result$AICc,2)))
+        labs(caption=str_c(SRregime_result$input$SR,"(",SRregime_result$input$method,
+                           "), No Regime", ", AICc: ",round(SRregime_result$AICc,2))
+        )
+      
+    }  else {
+      g1 = g1 + 
+      # labs(caption=str_c(SRregime_result$input$SR,"(",SRregime_result$input$method,
+      #                    "), regime_year: ", paste0(SRregime_result$input$regime.year,collapse="&"), 
+      #                    ", regime_key: ",paste0(SRregime_result$input$regime.key,collapse="->"),", AICc: ",round(SRregime_result$AICc,2)))
+    labs(caption=str_c(SRregime_result$input$SR,"(",SRregime_result$input$method,
+                       "), ", ", regime_par: ", paste0(SRregime_result$input$regime.par,collapse="&"),", ",
+                       paste0(SRregime_result$input$regime.year,collapse="&"), 
+                       ", ",paste0(SRregime_result$input$regime.key,collapse="->"),
+                       ", AICc: ",round(SRregime_result$AICc,2))
+         )
+    
+  }
+  g1
+}}
