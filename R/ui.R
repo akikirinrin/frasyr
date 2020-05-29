@@ -70,3 +70,63 @@ set_sr_params <- function(type, method, ar = NULL) {
        method = method,
        ar     = ar)
 }
+
+#' Set F current by direct input or referencing VPA result
+#'
+#' @param manual Numeric vector of F values such as
+#' c(0.123, 1.234, 2.345, 3.456)
+#' @param f_years Years to calculate mean F values
+#' @param s_years Years to calculate selectivity
+#' @param vpadata VPA object created by \code{vpa()}
+#' @return Numeric vector
+#' @examples
+#' \dontrun{
+#' vpadata <- vpa("some_setting")
+#'
+#' set_f_current(f_years = 2015:2017,
+#'               vpadata = vpadata)
+#'
+#' set_f_current(f_years = 2015:2017,
+#'               s_years = 2010:2016, # Use different years to calculate
+#'               vpadata = vpadata)
+#'
+#' set_f_current(
+#'   f_years = -4:-2, # (N - 1) years before the latest (latest: -1)
+#'   vpadata = vpadata),
+#' set_f_current(f_years = -4:-2,
+#'               f_years = -10:-1,
+#'               vpadata = vpadata),
+#' }
+#' @export
+set_f_current <- function(manual  = NULL,
+                          f_years = NULL,
+                          s_years = NULL,
+                          vpadata = NULL) {
+  if (!is.null(manual)) {
+    assertthat::assert_that(is.numeric(manual))
+    if (!is.null(f_years) || !is.null(s_years)) {
+      stop("'manual' option should be used solely.")
+    }
+    return(manual)
+  }
+
+  if (is.null(vpadata)) {
+    stop("Give 'vpadata' to set_f_current().")
+  }
+
+  assertthat::assert_that(is.list(vpadata))
+  assertthat::has_name(vpadata, "faa")
+
+  if (is.null(s_years)) {
+    # Use values in VPA object
+    apply_year_colum(vpadata$faa, target_year = f_years)
+  } else {
+    # Calc from selectivity of different years
+    if (is.null(f_years)) {
+       stop("Set 'f_years' to calculate F using selectivity")
+    }
+    convert_faa_perSPR(vpadata,
+                       sel_year = s_years,
+                       faa_year = f_years)
+  }
+}
