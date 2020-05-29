@@ -63,3 +63,58 @@ test_that("check_ar_params() warns to non-recommended args", {
   expect_warning(check_ar_params(method = "L1", ar = 'inside'), msg)
   expect_warning(check_ar_params(method = "L2", ar = 'inside'), msg)
 })
+
+context("Extract something from object")
+
+vpadata <- load_vpa("../../inst/extdata/res_vpa_pma.rda")
+
+test_that("extract_xaa() extracts values from VPA result", {
+  expect_equal(
+    extract_xaa(vpadata, "f", 2011), vpadata$faa["2011"]
+  )
+  expect_equal(
+    extract_xaa(vpadata, "f", 2010:2011), vpadata$faa[as.character(2010:2011)]
+  )
+
+  expect_equal(
+    extract_xaa(vpadata, "n", 2011), vpadata$naa["2011"]
+  )
+  expect_equal(
+    extract_xaa(vpadata, "n", 2010:2011), vpadata$naa[as.character(2010:2011)]
+  )
+})
+
+context("- extract_year_from()")
+
+test_that("from vpa object", {
+  years <- as.numeric(colnames(vpadata$faa))
+
+  expect_equal(extract_year_from(vpadata = vpadata), years)
+  expect_equal(extract_year_from(vpadata = vpadata), years)
+  expect_equal(extract_year_from(vpadata = vpadata, var = "naa"), years)
+  expect_equal(extract_year_from(vpadata = vpadata, var = "baa"), years)
+  expect_equal(extract_year_from(vpadata = vpadata, var = "faa"), years)
+  expect_equal(extract_year_from(vpadata = vpadata, var = "saa"), years)
+
+  expect_error(extract_year_from(),
+               "Give me either 'vpadata' or 'msydata'")
+})
+
+test_that("from vpa object", {
+  expect_error(extract_year_from(msydata = "input_MSY_object_here"),
+               "Not implemented")
+})
+
+
+context("Handling vectors")
+
+test_that("select_from_tail() selects elements from tail", {
+  vec <- 1:10
+  expect_equal(select_from_tail(vec, relative = -1),    10)
+  expect_equal(select_from_tail(vec, relative = -3:-1), 8:10)
+  expect_equal(select_from_tail(vec, relative = -1:-3), 8:10)
+
+  msg <- "'relative' should be negative"
+  expect_error(select_from_tail(vec, relative = 0), msg)
+  expect_error(select_from_tail(vec, relative = 1), msg)
+})

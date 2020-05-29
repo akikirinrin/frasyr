@@ -59,7 +59,7 @@ test_that("removes recent years by given number", {
 test_that(" returns error for unwanted args", {
   expect_error(generate_sr_weight(srdata),
                "Either `using` or `except` should be given")
-  
+
   expect_error(generate_sr_weight(using = "allyear",
                              n_yrs_to_remove = 1,
                              srdata),
@@ -105,5 +105,152 @@ test_that("set params correctly", {
                                 ar     = "outside"),
                   list("HS", "L1", "outside")),
     "Non-recommended combination"
+  )
+})
+
+context("Set Fcurrent using set_f_current()")
+tolerance <- 10 ^ -6
+
+vpadata <- load_vpa("../../inst/extdata/res_vpa_pma.rda")
+
+test_that("by giving manual F values", {
+
+  expect_equal(
+    set_f_current(manual = c(0.4901521, 1.1503151, 1.3131002, 1.3130997)),
+    c(0.4901521, 1.1503151, 1.3131002, 1.3130997)
+  )
+
+  expect_equal(set_f_current(manual = c(1, 2, 3, 4)), 1:4)
+  expect_equal(set_f_current(manual = c(100:110)),    100:110)
+
+  expect_error(set_f_current(manual = c("a", "b")))
+  expect_error(set_f_current(manual = TRUE))
+  expect_error(set_f_current(manual = c(TRUE, FALSE)))
+
+})
+
+test_that("by specifying years to extract from vpa result", {
+
+  expect_equal(
+    set_f_current(f_years = 2011, vpadata = vpadata),
+    c("0" = 0.635647, "1" = 1.234432, "2" = 1.297157, "3" = 1.297156),
+    tolerance = tolerance
+  )
+  expect_equal(
+    set_f_current(f_years = 2010:2011, vpadata = vpadata),
+    c("0" = 0.5986131, "1" = 1.1950626, "2" = 1.3735349, "3" = 1.3735346),
+    tolerance = tolerance
+  )
+
+  simplified_test <- function(year) {
+    expect_equal(set_f_current(f_years = year,
+                               vpadata = vpadata),
+                 extract_xaa(vpadata, "f", year, mean_by = "age"),
+                 tolerance = tolerance)
+  }
+
+  simplified_test(year = 2011)
+  simplified_test(year = 2010:2011)
+  simplified_test(year = 2009:2011)
+  simplified_test(year = 2009:2010)
+  simplified_test(year = 1982)
+  simplified_test(year = 1982:1983)
+  simplified_test(year = 1982:2011)
+  simplified_test(year = 2009)
+  simplified_test(year = c(2008, 2011))
+
+})
+
+context("- Calculate from selectivity")
+
+test_that("specified by direct year", {
+
+  expect_equal(
+    set_f_current(s_years = 2011,
+                  f_years = 2010,
+                  vpadata = vpadata),
+    c("0" = 0.5961694, "1" = 1.1577659, "2" = 1.2165952, "3" = 1.2165947),
+    tolerance = tolerance
+  )
+
+  expect_equal(
+    set_f_current(s_years = 2009:2011,
+                  f_years = 2008:2010,
+                  vpadata = vpadata),
+    c("0" = 0.5956203, "1" = 1.2892137, "2" = 1.4308449, "3" = 1.4308447),
+    tolerance = tolerance
+  )
+
+  expect_equal(
+    set_f_current(s_years = c(2007, 2009, 2011),
+                  f_years = 2009:2011,
+                  vpadata = vpadata),
+    c("0" = 0.5304168, "1" = 1.1756145, "2" = 1.3993345, "3" = 1.3993343),
+    tolerance = tolerance
+  )
+
+  msg_arg_collision <- "'manual' option should be used solely"
+  expect_error(set_f_current(s_years = 2011,
+                             manual = c(1, 2, 3, 4)),
+               msg_arg_collision)
+  expect_error(set_f_current(s_years = 2011,
+                             manual = c(1, 2, 3, 4)),
+               msg_arg_collision)
+  expect_error(set_f_current(s_years = 2011,
+                             f_years = 2011,
+                             manual = c(1, 2, 3, 4)),
+               msg_arg_collision)
+
+  expect_error(set_f_current(s_years = 2011,
+                             manual = c(1, 2, 3, 4)),
+               "'manual' option should be used solely")
+  expect_error(set_f_current(s_years = 2011),
+               "Give 'vpadata' to set_f_current()")
+  expect_error(set_f_current(s_years = 2011, vpadata = vpadata),
+               "Set 'f_years' to calculate F using selectivity")
+})
+
+test_that("specified by relative year", {
+  expect_equal(
+    set_f_current(s_years = -3:-1,
+                  f_years = -3:-1,
+                  vpadata = vpadata),
+    c("0" = 0.5436309, "1" =  1.1766831, "2" =  1.3059519, "3" =  1.3059517),
+    tolerance = tolerance
+  )
+
+  expect_equal(
+    set_f_current(s_years = -4:-2,
+                  f_years = -2:-1,
+                  vpadata = vpadata),
+    c("0" = 0.6195388, "1" =  1.1910085, "2" =  1.2515271, "3" =  1.2515271),
+    tolerance = tolerance
+  )
+})
+
+
+test_that("comparison between direct- and relative- year specification", {
+
+  relyr_s <- -4:-2
+  relyr_f <- -2:-1
+
+  absyr_s <- 2008:2010
+  absyr_f <- 2010:2011
+
+  years <- extract_year_from(vpadata)
+  assertthat::assert_that(
+    all(select_from_tail(years, relyr_s) == absyr_s)
+  )
+  assertthat::assert_that(
+    all(select_from_tail(years, relyr_f) == absyr_f)
+  )
+
+  expect_equal(
+    set_f_current(s_years = relyr_s,
+                  f_years = relyr_f,
+                  vpadata = vpadata),
+    set_f_current(s_years = absyr_s,
+                  f_years = absyr_f,
+                  vpadata = vpadata)
   )
 })
