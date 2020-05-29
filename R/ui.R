@@ -58,3 +58,15 @@ generate_sr_weight <- function(srdata, using = NULL, n_yrs_to_remove = NULL) {
   out[srdata$year %in% years_to_use] <- 1
   force(out)
 }
+
+
+#' @export
+set_sr_params <- function(type, method, ar = NULL) {
+
+  check_sr_params(type = type, method = method)
+  check_ar_params(method = method, ar = ar)
+
+  list(type   = type,
+       method = method,
+       ar     = ar)
+}

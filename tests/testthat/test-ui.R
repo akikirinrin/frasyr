@@ -65,3 +65,45 @@ test_that(" returns error for unwanted args", {
                              srdata),
                "Either `using` or `except` should be given")
 })
+
+
+context("set_sr_params() works")
+
+test_that("set params with default 'AR' args", {
+
+  hsl1 <- set_sr_params(type   = "HS",
+                        method = "L1")
+  expect_equal(hsl1$type,   "HS")
+  expect_equal(hsl1$method, "L1")
+  expect_null(hsl1$ar)
+
+  params <- set_sr_params(type   = "HS",
+                          method = "L2")
+  expect_equal(params$type,   "HS")
+  expect_equal(params$method, "L2")
+  expect_null(params$ar)
+})
+
+test_that("set params correctly", {
+  test_srparams <- function(prms, expect) {
+    expect_equal(prms$type,   expect[[1]])
+    expect_equal(prms$method, expect[[2]])
+    expect_equal(prms$ar,     expect[[3]])
+  }
+
+  expect_warning(
+    test_srparams(set_sr_params(type   = "BH",
+                                method = "L2",
+                                ar     = "inside"),
+                  list("BH", "L2", "inside")),
+    "ar = 'outside' is recommended"
+  )
+
+  expect_warning(
+    test_srparams(set_sr_params(type   = "HS",
+                                method = "L1",
+                                ar     = "outside"),
+                  list("HS", "L1", "outside")),
+    "Non-recommended combination"
+  )
+})
