@@ -21,3 +21,12 @@ test_that("load_inst() enables simple loading", {
       "pred.index", "wcaa", "naa", "faa", "baa", "ssb", "saa")
   )
 })
+
+
+test_that("return_file_type() works", {
+  expect_equal(return_file_type("foo.csv"), "csv")
+  expect_equal(return_file_type("foo.rda"), "rda")
+
+  expect_error(return_file_type("foo.csvv"), "Unknown file type")
+  expect_error(return_file_type("foo.rdaa"), "Unknown file type")
+})
