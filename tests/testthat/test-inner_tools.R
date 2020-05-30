@@ -116,3 +116,13 @@ test_that("select_from_tail() selects elements from tail", {
   expect_error(select_from_tail(vec, relative = 0), msg)
   expect_error(select_from_tail(vec, relative = 1), msg)
 })
+
+context("Handling files")
+
+test_that("extract_filename() works correctly", {
+  expect_equal(extract_filename("foo/bar/baz.csv"),      "baz.csv")
+  expect_equal(extract_filename("foo/bar/baz.rda"),      "baz.rda")
+  expect_equal(extract_filename("foo/bar/baz123.rda"),   "baz123.rda")
+  expect_equal(extract_filename("foo/bar/123baz.rda"),   "123baz.rda")
+  expect_equal(extract_filename("foo/bar/bad.name.rda"), "bad.name.rda")
+})
