@@ -2,7 +2,6 @@ context("Tools for developers")
 
 test_that("load_inst() enables simple loading", {
   msy <- load_inst("res_MSY_pma.rda")
-  load(system.file("extdata", "res_MSY_pma.rda", package = "frasyr"))
 
   expect_setequal(
     names(msy),
@@ -11,7 +10,6 @@ test_that("load_inst() enables simple loading", {
   )
 
   vpa <- load_inst("res_vpa_pma.rda")
-  load(system.file("extdata", "res_vpa_pma.rda", package = "frasyr"))
 
   expect_setequal(
     names(vpa),
@@ -60,8 +58,8 @@ test_that("check_ar_params() warns to non-recommended args", {
                  "Non-recommended combination")
 
   msg <- "ar = 'outside' is recommended."
-  expect_warning(check_ar_params(method = "L1", ar = 'inside'), msg)
-  expect_warning(check_ar_params(method = "L2", ar = 'inside'), msg)
+  expect_warning(check_ar_params(method = "L1", ar = "inside"), msg)
+  expect_warning(check_ar_params(method = "L2", ar = "inside"), msg)
 })
 
 context("Extract something from object")
