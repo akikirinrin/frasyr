@@ -1,6 +1,9 @@
-load_inst <- function(rda, env = new.env()) {
-  loaded <- load(system.file("extdata", rda, package = "frasyr"), envir = env)
-  invisible(env[[loaded]])
+load_inst <- function(fname) {
+  invisible(get(load(system.file("extdata", fname, package = "frasyr"))))
+  ## all_objnames <- ls()
+  ## target       <- all_objnames[all_objnames != "fname"]
+  ## env          <- environment()
+  ## invisible(env[[target]])
 }
 return_file_type <- function(fname) {
   if (stringr::str_detect(fname, "csv$")) {
@@ -104,4 +107,8 @@ select_from_tail <- function(vec, relatives) {
   if (any(relatives >= 0)) stop("'relative' should be negative")
 
   sort(rev(vec)[-(relatives)])
+}
+
+extract_filename <- function(path) {
+  stringr::str_extract(path, "(?<=/)(\\w|\\.)+\\.[a-z]+$")
 }
