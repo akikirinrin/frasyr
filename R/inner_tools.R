@@ -1,7 +1,5 @@
-load_inst <- function(rda) {
-  env = new.env()
-  loaded <- load(system.file(paste0("../inst/extdata/", rda),
-                             package = "frasyr"), envir = env)
+load_inst <- function(rda, env = new.env()) {
+  loaded <- load(system.file("extdata", rda, package = "frasyr"), envir = env)
   invisible(env[[loaded]])
 }
 return_file_type <- function(fname) {
