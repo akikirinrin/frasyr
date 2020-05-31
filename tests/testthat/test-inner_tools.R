@@ -1,7 +1,7 @@
 context("Tools for developers")
 
-test_that("load_inst() enables simple loading", {
-  msy <- load_inst("res_MSY_pma.rda")
+test_that("load_extdata() enables simple loading", {
+  msy <- load_extdata("res_MSY_pma.rda")
 
   expect_setequal(
     names(msy),
@@ -9,7 +9,7 @@ test_that("load_inst() enables simple loading", {
       "all.stat_tb", "trace", "input.list", "ssb.ar.mean", "SPR.msy")
   )
 
-  vpa <- load_inst("res_vpa_pma.rda")
+  vpa <- load_extdata("res_vpa_pma.rda")
 
   expect_setequal(
     names(vpa),

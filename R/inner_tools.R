@@ -1,9 +1,5 @@
-load_inst <- function(fname) {
+load_extdata <- function(fname) {
   invisible(get(load(system.file("extdata", fname, package = "frasyr"))))
-  ## all_objnames <- ls()
-  ## target       <- all_objnames[all_objnames != "fname"]
-  ## env          <- environment()
-  ## invisible(env[[target]])
 }
 return_file_type <- function(fname) {
   if (stringr::str_detect(fname, "csv$")) {
