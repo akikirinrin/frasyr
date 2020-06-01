@@ -1,13 +1,13 @@
 context("User interfaces")
 
-test_that("load_vpa() works", {
-  expect_is(load_vpa("../../inst/extdata/res_vpa_pma.rda"), "list")
-  expect_is(load_vpa("../../inst/extdata/vpa.csv"), "list")
+test_that("load_data() works", {
+  expect_is(load_data("../../inst/extdata/res_vpa_pma.rda"), "list")
+  expect_is(load_data("../../inst/extdata/vpa.csv"), "list")
 })
 
 
 context("- generate_sr_weight()")
-srdata    <- get.SRdata(load_vpa("../../inst/extdata/res_vpa_pma.rda"),
+srdata    <- get.SRdata(load_data("../../inst/extdata/res_vpa_pma.rda"),
                         return.df = TRUE)
 test_that("returns proper length vector", {
   wt_allyr <- generate_sr_weight(using = "allyear", srdata)
@@ -111,7 +111,7 @@ test_that("set params correctly", {
 context("Set Fcurrent using set_f_current()")
 tolerance <- 10 ^ -6
 
-vpadata <- load_vpa("../../inst/extdata/res_vpa_pma.rda")
+vpadata <- load_data("../../inst/extdata/res_vpa_pma.rda")
 
 test_that("by giving manual F values", {
 

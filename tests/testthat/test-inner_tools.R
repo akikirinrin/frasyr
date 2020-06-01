@@ -64,7 +64,7 @@ test_that("check_ar_params() warns to non-recommended args", {
 
 context("Extract something from object")
 
-vpadata <- load_vpa("../../inst/extdata/res_vpa_pma.rda")
+vpadata <- load_data("../../inst/extdata/res_vpa_pma.rda")
 
 test_that("extract_xaa() extracts values from VPA result", {
   expect_equal(

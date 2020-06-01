@@ -1,5 +1,5 @@
 #' @export
-load_vpa <- function(fname) {
+load_data <- function(fname) {
   request_from_developers <- stringr::str_detect(fname, "/inst/extdata")
   if (request_from_developers) {
     fname <- system.file("extdata", extract_filename(fname), package = "frasyr")
@@ -7,9 +7,10 @@ load_vpa <- function(fname) {
   ftype <- return_file_type(fname)
   if (ftype == "csv") {
     return(read.vpa(fname))
-  }
-  if (ftype == "rda") {
+  } else if (ftype == "rda") {
     get(load(fname))
+  } else {
+    stop("Unknown filetype", call. = TRUE)
   }
 }
 
