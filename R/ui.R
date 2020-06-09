@@ -135,3 +135,16 @@ set_f_current <- function(manual  = NULL,
                        faa_year = f_years)
   }
 }
+
+#' Retrieve function argument settings to reuse
+#'
+#' @param result objects created by make_future_data()
+#' @export
+retrieve_input <- function(result) {
+  assertthat::assert_that(
+    assertthat::has_name(result, "input"),
+    assertthat::has_name(result$input, "model_average_option")
+  )
+
+  force(result$input)
+}

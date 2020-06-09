@@ -254,3 +254,23 @@ test_that("comparison between direct- and relative- year specification", {
                   vpadata = vpadata)
   )
 })
+
+
+context("Retrieve input from the result of scientist meeting")
+
+test_that("usage of retrieve_input()", {
+
+  dummy_future_result <- list(data = "data",
+                              input = list(model_average_option = 123))
+  retrieved <- retrieve_input(dummy_future_result)
+
+  expect_equal(names(retrieved), "model_average_option")
+  expect_equal(retrieved$model_average_option, 123)
+
+  list_without_input <- list(data = "data")
+
+  expect_error(
+    retrieve_input(list_without_input),
+  )
+})
+
