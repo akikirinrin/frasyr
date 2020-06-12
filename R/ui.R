@@ -140,11 +140,20 @@ set_f_current <- function(manual  = NULL,
 #'
 #' @param result objects created by make_future_data()
 #' @export
-retrieve_input <- function(result) {
+retrieve_input <- function(result, new_sd = NULL) {
   assertthat::assert_that(
     assertthat::has_name(result, "input"),
+    assertthat::has_name(result$input$res_SR$pars, "sd"),
     assertthat::has_name(result$input, "model_average_option")
   )
 
-  force(result$input)
+  retrieved <- result$input
+
+  if (is.null(new_sd)) return(retrieved)
+
+  if (is.numeric(new_sd) == FALSE) stop("'new_sd' should be numeric")
+
+  retrieved$res_SR$pars$sd <- new_sd
+
+  force(retrieved)
 }
