@@ -256,16 +256,22 @@ test_that("comparison between direct- and relative- year specification", {
 })
 
 
-context("Retrieve input from the result of scientist meeting")
+context("Reuse input from the result of scientist meeting")
+dummy_future_result <-
+  list(
+    data = "data",
+    input = list(model_average_option = 123,
+                 res_SR = list(pars = list(sd = 0.123)))
+  )
 
-test_that("usage of retrieve_input()", {
+test_that("reuse inputs as-is", {
 
-  dummy_future_result <- list(data = "data",
-                              input = list(model_average_option = 123))
   retrieved <- retrieve_input(dummy_future_result)
 
-  expect_equal(names(retrieved), "model_average_option")
+  expect_setequal(names(retrieved), c("model_average_option", "res_SR"))
+
   expect_equal(retrieved$model_average_option, 123)
+  expect_equal(retrieved$res_SR$pars$sd,     0.123)
 
   list_without_input <- list(data = "data")
 
@@ -274,3 +280,14 @@ test_that("usage of retrieve_input()", {
   )
 })
 
+test_that("reuse inputs with modification", {
+
+  retrieved <- retrieve_input(dummy_future_result, new_sd = 0)
+  expect_equal(retrieved$res_SR$pars$sd, 0)
+
+  retrieved <- retrieve_input(dummy_future_result, new_sd = 0.456)
+  expect_equal(retrieved$res_SR$pars$sd, 0.456)
+
+  expect_error(retrieve_input(dummy_future_result, new_sd = "a"),
+               "'new_sd' should be numeric")
+})
